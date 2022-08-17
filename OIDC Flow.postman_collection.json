@@ -1,0 +1,641 @@
+{
+	"info": {
+		"_postman_id": "008d77f2-4b1d-4009-b171-ecf5412b0ee6",
+		"name": "OIDC Flow",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Step 0 - RootServices",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonObject = pm.response.json()\r",
+							"console.log(\"Step 0\")\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"console.log(jsonObject)\r",
+							"var rootServiceURL = \"https://\"+pm.environment.get(\"dns\")+\"/\"+pm.environment.get(\"application\")+\"/rootservices\"\r",
+							"\r",
+							"Object.entries(jsonObject).forEach(([key, value]) => {\r",
+							"    // we only want to expose the URLs in the Root Services document\r",
+							"    if ([key] == rootServiceURL) {\r",
+							"        for ( var key1 in jsonObject[key]) {\r",
+							"            // if ((key1 == \"http://open-services.net/ns/auto#autoServiceProviders\") || (key1 == \"http://jazz.net/xmlns/prod/jazz/jfs/1.0/oauthRequestTokenUrl\") || (key1 == \"http://jazz.net/xmlns/prod/jazz/jfs/1.0/oauthAccessTokenUrl\") || (key1 == \"http://jazz.net/xmlns/prod/jazz/jfs/1.0/oauthUserAuthorizationUrl\")) {\r",
+							"                for ( var loopCount in jsonObject[key][key1]) {\r",
+							"                    var test = jsonObject[key][key1][loopCount].value\r",
+							"                    var result = /[^/]*$/.exec(key1)[0]\r",
+							"                    pm.environment.set(result+\"URL\",test)\r",
+							"                }\r",
+							"            // 1}\r",
+							"        }\r",
+							"    }\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"console.log(\"Initial Clearing Cookies\")\r",
+							"const jar = pm.cookies.jar();\r",
+							"\r",
+							"jar.clear(pm.request.url, function (error) {\r",
+							"\r",
+							"});\r",
+							"\r",
+							"console.log(\"Successful access of restricted resource\")"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"strictSSL": false,
+				"disabledSystemHeaders": {
+					"accept": true
+				}
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json",
+						"description": "Choose Format for Response Body - JSON",
+						"type": "default"
+					},
+					{
+						"key": "accept",
+						"value": "application/rdf+xml",
+						"description": "Choose Format for Response Body - RDF/XML",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "accept",
+						"value": "text/turtle",
+						"description": "Choose Format for Response Body - Turtle",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "https://{{dns}}/{{application}}/rootservices",
+					"protocol": "https",
+					"host": [
+						"{{dns}}"
+					],
+					"path": [
+						"{{application}}",
+						"rootservices"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "JSON Response",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json",
+								"description": "Choose Format for Response Body - JSON",
+								"type": "default"
+							},
+							{
+								"key": "accept",
+								"value": "application/rdf+xml",
+								"description": "Choose Format for Response Body - RDF/XML",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "accept",
+								"value": "text/turtle",
+								"description": "Choose Format for Response Body - Turtle",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "https://{{dns}}/{{application}}/rootservices",
+							"protocol": "https",
+							"host": [
+								"{{dns}}"
+							],
+							"path": [
+								"{{application}}",
+								"rootservices"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "X-Powered-By",
+							"value": "Servlet/3.0"
+						},
+						{
+							"key": "Strict-Transport-Security",
+							"value": "max-age=31536000"
+						},
+						{
+							"key": "x-com-ibm-team-scenario",
+							"value": "9.211.158.205"
+						},
+						{
+							"key": "ETag",
+							"value": "\"to1vDayhGXeWi4rNrHMjhr04vOw=\""
+						},
+						{
+							"key": "Date",
+							"value": "Tue, 15 Feb 2022 19:13:56 GMT"
+						},
+						{
+							"key": "Expires",
+							"value": "Tue, 15 Feb 2022 19:18:56 GMT"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "public"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=UTF-8"
+						},
+						{
+							"key": "Content-Language",
+							"value": "en-US"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"https://elmwb.com:9443/rm/rootservices\": {\n        \"http://jazz.net/xmlns/prod/jazz/discovery/1.0/registration\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"https://elmwb.com:9443/rm/service/com.ibm.team.repository.service.internal.setup.IRegistrationHandlerService\"\n            }\n        ],\n        \"http://jazz.net/xmlns/prod/jazz/process/0.6/projectAreas\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"https://elmwb.com:9443/rm/process/project-areas\"\n            }\n        ],\n        \"http://jazz.net/xmlns/prod/jazz/jfs/1.0/search\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"https://elmwb.com:9443/rm/search\"\n            }\n        ],\n        \"http://jazz.net/xmlns/prod/jazz/jfs/1.0/jauthRevokeTokenUrl\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"https://elmwb.com:9443/jts/jauth-revoke-token\"\n            }\n        ],\n        \"http://jazz.net/xmlns/prod/jazz/jfs/1.0/oauthRealmName\": [\n            {\n                \"type\": \"literal\",\n                \"value\": \"Jazz\"\n            }\n        ],\n        \"http://jazz.net/xmlns/prod/jazz/jfs/1.0/jauthCheckAuthUrl\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"https://elmwb.com:9443/jts/jauth-check-auth\"\n            }\n        ],\n        \"http://jazz.net/xmlns/prod/jazz/jfs/1.0/history\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"https://elmwb.com:9443/rm/history\"\n            }\n        ],\n        \"http://jazz.net/xmlns/prod/jazz/jfs/1.0/changes\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"https://elmwb.com:9443/rm/changes\"\n            }\n        ],\n        \"http://jazz.net/xmlns/prod/jazz/jfs/1.0/oauthDomain\": [\n            {\n                \"type\": \"literal\",\n                \"value\": \"https://elmwb.com:9443/jts,https://elmwb.com:9443/rm\"\n            }\n        ],\n        \"http://jazz.net/xmlns/prod/jazz/jfs/1.0/jauthProxyUrl\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"https://elmwb.com:9443/jts/jauth-proxy\"\n            }\n        ],\n        \"http://jazz.net/xmlns/prod/jazz/process/0.6/processSecurity\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"https://elmwb.com:9443/rm/process-security\"\n            }\n        ],\n        \"http://jazz.net/xmlns/prod/jazz/jfs/1.0/oauthApprovalModuleUrl\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"https://elmwb.com:9443/jts/_ajax-modules/com.ibm.team.repository.AuthorizeOAuth\"\n            }\n        ],\n        \"http://jazz.net/xmlns/prod/jazz/jfs/1.0/storage\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"https://elmwb.com:9443/rm/storage\"\n            }\n        ],\n        \"http://jazz.net/xmlns/prod/jazz/jfs/1.0/jauthSigninUrl\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"https://elmwb.com:9443/jts/jauth-signin\"\n            }\n        ],\n        \"http://jazz.net/xmlns/prod/jazz/jtp/0.6/file\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"https://elmwb.com:9443/rm/process-authoring/file\"\n            }\n        ],\n        \"http://open-services.net/xmlns/rm/1.0/version\": [\n            {\n                \"type\": \"literal\",\n                \"value\": \"7.0.2\"\n            }\n        ],\n        \"http://www.ibm.com/xmlns/rdm/rdf/rrcExtensions\": [\n            {\n                \"type\": \"literal\",\n                \"value\": \"0.1.3-0.1.5\"\n            }\n        ],\n        \"http://open-services.net/ns/config#cmServiceProviders\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"https://elmwb.com:9443/rm/oslc_config\"\n            }\n        ],\n        \"http://purl.org/dc/terms/description\": [\n            {\n                \"type\": \"literal\",\n                \"value\": \"This application provides the capabilities to create\\n\\t\\tand manage requirements and trace them to modeling, testing, and\\n\\t\\tchange and configuration management. You can define, elicit, capture,\\n\\t\\telaborate, discuss, and review requirements and supporting artifacts.\\n\\t\"\n            }\n        ],\n        \"http://jazz.net/xmlns/prod/jazz/discovery/1.0/friends\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"https://elmwb.com:9443/rm/friends\"\n            }\n        ],\n        \"http://jazz.net/xmlns/prod/jazz/discovery/1.0/jsaSsoEnabled\": [\n            {\n                \"type\": \"literal\",\n                \"value\": \"true\"\n            }\n        ],\n        \"http://jazz.net/xmlns/prod/jazz/discovery/1.0/infocenterRoot\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"https://elmwb.com:9443/clmhelp\"\n            }\n        ],\n        \"http://www.ibm.com/xmlns/rdm/rdf/components\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"https://elmwb.com:9443/rm/cm/component/ldpc\"\n            }\n        ],\n        \"http://jazz.net/xmlns/prod/jazz/jfs/1.0/oauthRequestTokenUrl\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"https://elmwb.com:9443/jts/oauth-request-token\"\n            }\n        ],\n        \"http://jazz.net/xmlns/prod/jazz/jfs/1.0/indexing\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"https://elmwb.com:9443/rm/indexing\"\n            }\n        ],\n        \"http://jazz.net/xmlns/prod/jazz/process/0.6/processTemplates\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"https://elmwb.com:9443/rm/process/templates\"\n            }\n        ],\n        \"http://jazz.net/xmlns/prod/jazz/jfs/1.0/oauthAccessTokenUrl\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"https://elmwb.com:9443/jts/oauth-access-token\"\n            }\n        ],\n        \"http://purl.org/dc/terms/title\": [\n            {\n                \"type\": \"literal\",\n                \"value\": \"Doors Next\",\n                \"lang\": \"en\"\n            }\n        ],\n        \"http://open-services.net/xmlns/rm/1.0/rmServiceProviders\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"https://elmwb.com:9443/rm/oslc_rm/catalog\"\n            }\n        ],\n        \"http://jazz.net/xmlns/prod/jazz/jfs/1.0/jauthIssueTokenUrl\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"https://elmwb.com:9443/jts/jauth-issue-token\"\n            }\n        ],\n        \"http://jazz.net/xmlns/prod/jazz/jfs/1.0/adminWebUI\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"https://elmwb.com:9443/rm/admin\"\n            }\n        ],\n        \"http://jazz.net/xmlns/prod/jazz/dashboard/1.0/dashboards\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"https://elmwb.com:9443/jts/dashboards\"\n            }\n        ],\n        \"http://open-services.net/xmlns/rm/1.0/buildVersion\": [\n            {\n                \"type\": \"literal\",\n                \"value\": \"7.0.2\"\n            }\n        ],\n        \"http://jazz.net/xmlns/prod/jazz/jfs/1.0/mailer\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"https://elmwb.com:9443/jts/mailer\"\n            }\n        ],\n        \"http://www.ibm.com/xmlns/rdm/rdf/projectAreas\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"https://elmwb.com:9443/rm/projects\"\n            }\n        ],\n        \"http://jazz.net/xmlns/prod/jazz/discovery/1.0/viewletServiceRoot\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"https://elmwb.com:9443/jts\"\n            }\n        ],\n        \"http://jazz.net/xmlns/prod/jazz/jfs/1.0/oauthUserAuthorizationUrl\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"https://elmwb.com:9443/jts/oauth-authorize\"\n            }\n        ],\n        \"http://open-services.net/xmlns/rm/1.0/majorVersion\": [\n            {\n                \"type\": \"literal\",\n                \"value\": \"7\"\n            }\n        ],\n        \"http://www.ibm.com/xmlns/rdm/rdf/trackedResourceSetProvider\": [\n            {\n                \"type\": \"bnode\",\n                \"value\": \"_:6c4bf092_17efebd37f6_-3c41\"\n            }\n        ],\n        \"http://jazz.net/xmlns/prod/jazz/jtp/0.6/license\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"https://elmwb.com:9443/rm/process-authoring/license\"\n            }\n        ],\n        \"http://open-services.net/ns/core#publisher\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"https://elmwb.com:9443/rm/application-about\"\n            }\n        ],\n        \"http://jazz.net/xmlns/prod/jazz/discovery/1.0/discovery\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"https://elmwb.com:9443/rm/discovery\"\n            }\n        ],\n        \"http://jazz.net/xmlns/prod/jazz/jfs/1.0/users\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"https://elmwb.com:9443/jts/users\"\n            }\n        ],\n        \"http://jazz.net/xmlns/prod/jazz/jfs/1.0/baselines\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"https://elmwb.com:9443/rm/baselines\"\n            }\n        ],\n        \"http://jazz.net/xmlns/prod/jazz/discovery/1.0/viewletWebUIRoot\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"https://elmwb.com:9443/rm\"\n            }\n        ],\n        \"http://jazz.net/xmlns/prod/jazz/jfs/1.0/oauthRequestConsumerKeyUrl\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"https://elmwb.com:9443/jts/oauth-request-consumer\"\n            }\n        ],\n        \"http://jazz.net/xmlns/prod/jazz/jfs/1.0/currentUser\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"https://elmwb.com:9443/jts/whoami\"\n            }\n        ],\n        \"http://jazz.net/xmlns/prod/jazz/jtp/0.6/associations\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"https://elmwb.com:9443/rm/process-authoring/associations\"\n            }\n        ],\n        \"http://jazz.net/xmlns/prod/jazz/jfs/1.0/jauthCheckTokenUrl\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"https://elmwb.com:9443/jts/jauth-check-token\"\n            }\n        ],\n        \"http://jazz.net/xmlns/prod/jazz/jfs/1.0/query\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"https://elmwb.com:9443/rm/query\"\n            }\n        ],\n        \"http://www.ibm.com/xmlns/rdm/rdf/cmpProjectAreas\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"https://elmwb.com:9443/rm/rm-projects\"\n            }\n        ],\n        \"http://jazz.net/xmlns/prod/jazz/jfs/1.0/oauthExpireTokenUrl\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"https://elmwb.com:9443/jts/oauth-expire-token\"\n            }\n        ],\n        \"http://jazz.net/xmlns/prod/jazz/jfs/1.0/setupWizardDescriptor\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"https://elmwb.com:9443/rm/service/com.ibm.team.repository.service.internal.setup.ISetupWizardDescriptorService\"\n            }\n        ],\n        \"http://jazz.net/xmlns/prod/jazz/jfs/1.0/bulkOperations\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"https://elmwb.com:9443/rm/bulk\"\n            }\n        ],\n        \"http://jazz.net/xmlns/prod/jazz/jtp/0.6/defaultPracticeLibraryUrl\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"https://elmwb.com:9443/rm/process-authoring/libraries/shared\"\n            }\n        ],\n        \"http://jazz.net/ns/ui#widgetCatalog\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"https://elmwb.com:9443/rm/RmWidgetCatalog\"\n            }\n        ],\n        \"http://jazz.net/xmlns/prod/jazz/jtp/0.6/practices\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"https://elmwb.com:9443/rm/process-authoring/practices\"\n            }\n        ],\n        \"http://jazz.net/xmlns/prod/jazz/jtp/0.6/processDescriptions\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"https://elmwb.com:9443/rm/process-authoring/descriptions\"\n            }\n        ],\n        \"http://www.ibm.com/xmlns/rdm/rdf/glossaryTermsQuery\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"https://elmwb.com:9443/rm/glossary/termslookup\"\n            }\n        ]\n    },\n    \"_:6c4bf092_17efebd37f6_-3c41\": {\n        \"http://open-services.net/ns/core/trs#trackedResourceSet\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"https://elmwb.com:9443/rm/process-trs2\"\n            }\n        ],\n        \"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"http://open-services.net/ns/core/trs#TrackedResourceSet\"\n            }\n        ],\n        \"http://open-services.net/ns/core#domain\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"http://jazz.net/ns/process#\"\n            }\n        ],\n        \"http://purl.org/dc/terms/description\": [\n            {\n                \"type\": \"literal\",\n                \"value\": \"TRS 2.0 feed for process resources in DOORS Next\"\n            }\n        ],\n        \"http://purl.org/dc/terms/type\": [\n            {\n                \"type\": \"uri\",\n                \"value\": \"http://jazz.net/ns/process#\"\n            }\n        ],\n        \"http://purl.org/dc/terms/title\": [\n            {\n                \"type\": \"literal\",\n                \"value\": \"TRS 2.0 for DOORS Next Process Resources\"\n            }\n        ]\n    }\n}"
+				},
+				{
+					"name": "RDF Response",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json",
+								"description": "Choose Format for Response Body - JSON",
+								"type": "default",
+								"disabled": true
+							},
+							{
+								"key": "accept",
+								"value": "application/rdf+xml",
+								"description": "Choose Format for Response Body - RDF/XML",
+								"type": "text"
+							},
+							{
+								"key": "accept",
+								"value": "text/turtle",
+								"description": "Choose Format for Response Body - Turtle",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "https://{{dns}}/{{application}}/rootservices",
+							"protocol": "https",
+							"host": [
+								"{{dns}}"
+							],
+							"path": [
+								"{{application}}",
+								"rootservices"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "xml",
+					"header": [
+						{
+							"key": "X-Powered-By",
+							"value": "Servlet/3.0"
+						},
+						{
+							"key": "Strict-Transport-Security",
+							"value": "max-age=31536000"
+						},
+						{
+							"key": "x-com-ibm-team-scenario",
+							"value": "9.211.158.205"
+						},
+						{
+							"key": "ETag",
+							"value": "\"to1vDayhGXeWi4rNrHMjhr04vOw=\""
+						},
+						{
+							"key": "Date",
+							"value": "Tue, 15 Feb 2022 21:18:34 GMT"
+						},
+						{
+							"key": "Expires",
+							"value": "Tue, 15 Feb 2022 21:23:34 GMT"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "public"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/rdf+xml; charset=UTF-8"
+						},
+						{
+							"key": "Content-Language",
+							"value": "en-US"
+						},
+						{
+							"key": "Content-Length",
+							"value": "8083"
+						}
+					],
+					"cookie": [],
+					"body": "<?xml version=\"1.0\"?>\n<!--\n    Licensed Materials - Property of IBM\n    (c) Copyright IBM Corporation 2013, 2019. All Rights Reserved.\n   \n    Note to U.S. Government Users Restricted Rights:  \n    Use, duplication or disclosure restricted by GSA ADP Schedule \n    Contract with IBM Corp. \n -->\n<rdf:Description xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"\n\txmlns:dc=\"http://purl.org/dc/terms/\" xmlns:jfs=\"http://jazz.net/xmlns/prod/jazz/jfs/1.0/\"\n\txmlns:jd=\"http://jazz.net/xmlns/prod/jazz/discovery/1.0/\" xmlns:jdb=\"http://jazz.net/xmlns/prod/jazz/dashboard/1.0/\"\n\txmlns:jp06=\"http://jazz.net/xmlns/prod/jazz/process/0.6/\" xmlns:jp=\"http://jazz.net/xmlns/prod/jazz/process/1.0/\"\n\txmlns:jtp=\"http://jazz.net/xmlns/prod/jazz/jtp/0.6/\" xmlns:ju=\"http://jazz.net/ns/ui#\"\n\txmlns:oslc=\"http://open-services.net/ns/core#\" xmlns:rm=\"http://www.ibm.com/xmlns/rdm/rdf/\"\n\txmlns:oslc_rm=\"http://open-services.net/xmlns/rm/1.0/\" \n\txmlns:oslc_config=\"http://open-services.net/ns/config#\"\n\txmlns:trs2=\"http://open-services.net/ns/core/trs#\"\n\trdf:about=\"https://elmwb.com:9443/rm/rootservices\">\n    <!-- \n  \t\tRoot services resource template for applications based on JAF SDK.\n  \t\tContains required contributions both for applications and for the JTS.\n  \t\tApplications may add additional services, but may only remove services noted as being \"JTS only\".\n  \t\tSpecification is available at https://jazz.net/wiki/bin/view/Main/RootServicesSpec\n   -->\n    <!-- Modify to provide a descriptive title for the application -->\n    <dc:title xml:lang=\"en\">Doors Next</dc:title>\n    <dc:description>This application provides the capabilities to create\n\t\tand manage requirements and trace them to modeling, testing, and\n\t\tchange and configuration management. You can define, elicit, capture,\n\t\telaborate, discuss, and review requirements and supporting artifacts.\n\t</dc:description>\n    <!-- The following services must be included in both the JTS and applications -->\n    <jd:discovery rdf:resource=\"https://elmwb.com:9443/rm/discovery\" />\n    <jd:friends rdf:resource=\"https://elmwb.com:9443/rm/friends\" />\n    <jd:infocenterRoot rdf:resource=\"https://elmwb.com:9443/jts/../clmhelp\" />\n    <jd:viewletServiceRoot rdf:resource=\"https://elmwb.com:9443/jts\" />\n    <jd:viewletWebUIRoot rdf:resource=\"https://elmwb.com:9443/rm\" />\n    <jd:jsaSsoEnabled>true</jd:jsaSsoEnabled>\n    <jfs:oauthDomain>https://elmwb.com:9443/jts,https://elmwb.com:9443/rm</jfs:oauthDomain>\n    <jfs:oauthRealmName>Jazz</jfs:oauthRealmName>\n    <jfs:oauthAccessTokenUrl rdf:resource=\"https://elmwb.com:9443/jts/oauth-access-token\" />\n    <jfs:oauthApprovalModuleUrl\trdf:resource=\"https://elmwb.com:9443/jts/_ajax-modules/com.ibm.team.repository.AuthorizeOAuth\" />\n    <jfs:oauthExpireTokenUrl rdf:resource=\"https://elmwb.com:9443/jts/oauth-expire-token\" />\n    <jfs:oauthRequestConsumerKeyUrl\trdf:resource=\"https://elmwb.com:9443/jts/oauth-request-consumer\" />\n    <jfs:oauthRequestTokenUrl rdf:resource=\"https://elmwb.com:9443/jts/oauth-request-token\" />\n    <jfs:oauthUserAuthorizationUrl rdf:resource=\"https://elmwb.com:9443/jts/oauth-authorize\" />\n    <jfs:jauthCheckAuthUrl rdf:resource=\"https://elmwb.com:9443/jts/jauth-check-auth\" />\n    <jfs:jauthCheckTokenUrl rdf:resource=\"https://elmwb.com:9443/jts/jauth-check-token\" />\n    <jfs:jauthIssueTokenUrl rdf:resource=\"https://elmwb.com:9443/jts/jauth-issue-token\" />\n    <jfs:jauthProxyUrl rdf:resource=\"https://elmwb.com:9443/jts/jauth-proxy\" />\n    <jfs:jauthRevokeTokenUrl rdf:resource=\"https://elmwb.com:9443/jts/jauth-revoke-token\" />\n    <jfs:jauthSigninUrl rdf:resource=\"https://elmwb.com:9443/jts/jauth-signin\" />\n    <jfs:baselines rdf:resource=\"https://elmwb.com:9443/rm/baselines\" />\n    <jfs:bulkOperations rdf:resource=\"https://elmwb.com:9443/rm/bulk\" />\n    <jfs:changes rdf:resource=\"https://elmwb.com:9443/rm/changes\" />\n    <jfs:currentUser rdf:resource=\"https://elmwb.com:9443/jts/whoami\" />\n    <jfs:history rdf:resource=\"https://elmwb.com:9443/rm/history\" />\n    <jfs:indexing rdf:resource=\"https://elmwb.com:9443/rm/indexing\" />\n    <jfs:mailer rdf:resource=\"https://elmwb.com:9443/jts/mailer\" />\n    <jfs:query rdf:resource=\"https://elmwb.com:9443/rm/query\" />\n    <jfs:search rdf:resource=\"https://elmwb.com:9443/rm/search\" />\n    <jfs:storage rdf:resource=\"https://elmwb.com:9443/rm/storage\" />\n    <jfs:users rdf:resource=\"https://elmwb.com:9443/jts/users\" />\n    <jfs:setupWizardDescriptor rdf:resource=\"https://elmwb.com:9443/rm/service/com.ibm.team.repository.service.internal.setup.ISetupWizardDescriptorService\" />\n    <jdb:dashboards rdf:resource=\"https://elmwb.com:9443/jts/dashboards\" />\n    <ju:widgetCatalog rdf:resource=\"https://elmwb.com:9443/rm/RmWidgetCatalog\" />\n    <jp06:processSecurity rdf:resource=\"https://elmwb.com:9443/rm/process-security\" />\n    <jp06:processTemplates rdf:resource=\"https://elmwb.com:9443/rm/process/templates\" />\n    <jp06:projectAreas rdf:resource=\"https://elmwb.com:9443/rm/process/project-areas\" />\n    <jtp:associations rdf:resource=\"https://elmwb.com:9443/rm/process-authoring/associations\" />\n    <jtp:defaultPracticeLibraryUrl rdf:resource=\"https://elmwb.com:9443/rm/process-authoring/libraries/shared\" />\n    <jtp:file rdf:resource=\"https://elmwb.com:9443/rm/process-authoring/file\" />\n    <jtp:license rdf:resource=\"https://elmwb.com:9443/rm/process-authoring/license\" />\n    <jtp:practices rdf:resource=\"https://elmwb.com:9443/rm/process-authoring/practices\" />\n    <jtp:processDescriptions rdf:resource=\"https://elmwb.com:9443/rm/process-authoring/descriptions\" />\n    <oslc:publisher rdf:resource=\"https://elmwb.com:9443/rm/application-about\" />\n    <!-- End of services common to JTS and applications -->\n    <!-- Applications may add any services they provide here -->\n    <oslc_rm:rmServiceProviders rdf:resource=\"https://elmwb.com:9443/rm/oslc_rm/catalog\" />\n    <oslc_rm:majorVersion>7</oslc_rm:majorVersion>\n    <oslc_rm:version>7.0.2</oslc_rm:version>\n    <oslc_rm:buildVersion>7.0.2</oslc_rm:buildVersion>\n    <oslc_config:cmServiceProviders\trdf:resource=\"https://elmwb.com:9443/rm/oslc_config\"/>\n    <rm:glossaryTermsQuery rdf:resource=\"https://elmwb.com:9443/rm/glossary/termslookup\" />\n    <rm:components rdf:resource=\"https://elmwb.com:9443/rm/cm/component/ldpc\" />\n    <rm:projectAreas rdf:resource=\"https://elmwb.com:9443/rm/projects\" />\n    <rm:cmpProjectAreas rdf:resource=\"https://elmwb.com:9443/rm/rm-projects\" />\n    <rm:rrcExtensions>0.1.3-0.1.5</rm:rrcExtensions>\n    <!-- The admin Web UI service should be uncommented in applications -->\n    <jfs:adminWebUI rdf:resource=\"https://elmwb.com:9443/rm/admin\" />\n    <!-- The registration handler service should be uncommented for application  that do not supply their own -->\n    <jd:registration rdf:resource=\"https://elmwb.com:9443/rm/service/com.ibm.team.repository.service.internal.setup.IRegistrationHandlerService\" />\n    <!--  Process Component Tracked Resource Set 2.0 Provider -->\n    <rm:trackedResourceSetProvider>\n        <trs2:TrackedResourceSet>\n            <trs2:trackedResourceSet rdf:resource=\"https://elmwb.com:9443/rm/process-trs2\" />\n            <dc:title>TRS 2.0 for DOORS Next Process Resources</dc:title>\n            <dc:description>TRS 2.0 feed for process resources in DOORS Next</dc:description>\n            <dc:type     rdf:resource=\"http://jazz.net/ns/process#\" />\n            <oslc:domain rdf:resource=\"http://jazz.net/ns/process#\" />\n        </trs2:TrackedResourceSet>\n    </rm:trackedResourceSetProvider>\n    <!-- End of application-specific services -->\n\n\n</rdf:Description>"
+				},
+				{
+					"name": "Turtle Response",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json",
+								"description": "Choose Format for Response Body - JSON",
+								"type": "default",
+								"disabled": true
+							},
+							{
+								"key": "accept",
+								"value": "application/rdf+xml",
+								"description": "Choose Format for Response Body - RDF/XML",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "accept",
+								"value": "text/turtle",
+								"description": "Choose Format for Response Body - Turtle",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://{{dns}}/{{application}}/rootservices",
+							"protocol": "https",
+							"host": [
+								"{{dns}}"
+							],
+							"path": [
+								"{{application}}",
+								"rootservices"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "plain",
+					"header": [
+						{
+							"key": "X-Powered-By",
+							"value": "Servlet/3.0"
+						},
+						{
+							"key": "Strict-Transport-Security",
+							"value": "max-age=31536000"
+						},
+						{
+							"key": "x-com-ibm-team-scenario",
+							"value": "9.211.158.205"
+						},
+						{
+							"key": "ETag",
+							"value": "\"to1vDayhGXeWi4rNrHMjhr04vOw=\""
+						},
+						{
+							"key": "Date",
+							"value": "Tue, 15 Feb 2022 21:19:09 GMT"
+						},
+						{
+							"key": "Expires",
+							"value": "Tue, 15 Feb 2022 21:24:09 GMT"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "public"
+						},
+						{
+							"key": "Content-Type",
+							"value": "text/turtle; charset=UTF-8"
+						},
+						{
+							"key": "Content-Language",
+							"value": "en-US"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						}
+					],
+					"cookie": [],
+					"body": "@prefix jp:      <http://jazz.net/xmlns/prod/jazz/process/1.0/> .\r\n@prefix jtp:     <http://jazz.net/xmlns/prod/jazz/jtp/0.6/> .\r\n@prefix jdb:     <http://jazz.net/xmlns/prod/jazz/dashboard/1.0/> .\r\n@prefix ju:      <http://jazz.net/ns/ui#> .\r\n@prefix trs2:    <http://open-services.net/ns/core/trs#> .\r\n@prefix oslc_config:  <http://open-services.net/ns/config#> .\r\n@prefix oslc_rm:  <http://open-services.net/xmlns/rm/1.0/> .\r\n@prefix oslc:    <http://open-services.net/ns/core#> .\r\n@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\r\n@prefix jfs:     <http://jazz.net/xmlns/prod/jazz/jfs/1.0/> .\r\n@prefix jd:      <http://jazz.net/xmlns/prod/jazz/discovery/1.0/> .\r\n@prefix rm:      <http://www.ibm.com/xmlns/rdm/rdf/> .\r\n@prefix jp06:    <http://jazz.net/xmlns/prod/jazz/process/0.6/> .\r\n@prefix dc:      <http://purl.org/dc/terms/> .\r\n\r\n<https://elmwb.com:9443/rm/rootservices>\r\n      ju:widgetCatalog <https://elmwb.com:9443/rm/RmWidgetCatalog> ;\r\n      jdb:dashboards <https://elmwb.com:9443/jts/dashboards> ;\r\n      jd:discovery <https://elmwb.com:9443/rm/discovery> ;\r\n      jd:friends <https://elmwb.com:9443/rm/friends> ;\r\n      jd:infocenterRoot <https://elmwb.com:9443/clmhelp> ;\r\n      jd:jsaSsoEnabled \"true\" ;\r\n      jd:registration <https://elmwb.com:9443/rm/service/com.ibm.team.repository.service.internal.setup.IRegistrationHandlerService> ;\r\n      jd:viewletServiceRoot\r\n              <https://elmwb.com:9443/jts> ;\r\n      jd:viewletWebUIRoot <https://elmwb.com:9443/rm> ;\r\n      jfs:adminWebUI <https://elmwb.com:9443/rm/admin> ;\r\n      jfs:baselines <https://elmwb.com:9443/rm/baselines> ;\r\n      jfs:bulkOperations <https://elmwb.com:9443/rm/bulk> ;\r\n      jfs:changes <https://elmwb.com:9443/rm/changes> ;\r\n      jfs:currentUser <https://elmwb.com:9443/jts/whoami> ;\r\n      jfs:history <https://elmwb.com:9443/rm/history> ;\r\n      jfs:indexing <https://elmwb.com:9443/rm/indexing> ;\r\n      jfs:jauthCheckAuthUrl\r\n              <https://elmwb.com:9443/jts/jauth-check-auth> ;\r\n      jfs:jauthCheckTokenUrl\r\n              <https://elmwb.com:9443/jts/jauth-check-token> ;\r\n      jfs:jauthIssueTokenUrl\r\n              <https://elmwb.com:9443/jts/jauth-issue-token> ;\r\n      jfs:jauthProxyUrl <https://elmwb.com:9443/jts/jauth-proxy> ;\r\n      jfs:jauthRevokeTokenUrl\r\n              <https://elmwb.com:9443/jts/jauth-revoke-token> ;\r\n      jfs:jauthSigninUrl <https://elmwb.com:9443/jts/jauth-signin> ;\r\n      jfs:mailer <https://elmwb.com:9443/jts/mailer> ;\r\n      jfs:oauthAccessTokenUrl\r\n              <https://elmwb.com:9443/jts/oauth-access-token> ;\r\n      jfs:oauthApprovalModuleUrl\r\n              <https://elmwb.com:9443/jts/_ajax-modules/com.ibm.team.repository.AuthorizeOAuth> ;\r\n      jfs:oauthDomain \"https://elmwb.com:9443/jts,https://elmwb.com:9443/rm\" ;\r\n      jfs:oauthExpireTokenUrl\r\n              <https://elmwb.com:9443/jts/oauth-expire-token> ;\r\n      jfs:oauthRealmName \"Jazz\" ;\r\n      jfs:oauthRequestConsumerKeyUrl\r\n              <https://elmwb.com:9443/jts/oauth-request-consumer> ;\r\n      jfs:oauthRequestTokenUrl\r\n              <https://elmwb.com:9443/jts/oauth-request-token> ;\r\n      jfs:oauthUserAuthorizationUrl\r\n              <https://elmwb.com:9443/jts/oauth-authorize> ;\r\n      jfs:query <https://elmwb.com:9443/rm/query> ;\r\n      jfs:search <https://elmwb.com:9443/rm/search> ;\r\n      jfs:setupWizardDescriptor\r\n              <https://elmwb.com:9443/rm/service/com.ibm.team.repository.service.internal.setup.ISetupWizardDescriptorService> ;\r\n      jfs:storage <https://elmwb.com:9443/rm/storage> ;\r\n      jfs:users <https://elmwb.com:9443/jts/users> ;\r\n      jtp:associations <https://elmwb.com:9443/rm/process-authoring/associations> ;\r\n      jtp:defaultPracticeLibraryUrl\r\n              <https://elmwb.com:9443/rm/process-authoring/libraries/shared> ;\r\n      jtp:file <https://elmwb.com:9443/rm/process-authoring/file> ;\r\n      jtp:license <https://elmwb.com:9443/rm/process-authoring/license> ;\r\n      jtp:practices <https://elmwb.com:9443/rm/process-authoring/practices> ;\r\n      jtp:processDescriptions\r\n              <https://elmwb.com:9443/rm/process-authoring/descriptions> ;\r\n      jp06:processSecurity\r\n              <https://elmwb.com:9443/rm/process-security> ;\r\n      jp06:processTemplates\r\n              <https://elmwb.com:9443/rm/process/templates> ;\r\n      jp06:projectAreas <https://elmwb.com:9443/rm/process/project-areas> ;\r\n      oslc_config:cmServiceProviders\r\n              <https://elmwb.com:9443/rm/oslc_config> ;\r\n      oslc:publisher <https://elmwb.com:9443/rm/application-about> ;\r\n      oslc_rm:buildVersion\r\n              \"7.0.2\" ;\r\n      oslc_rm:majorVersion\r\n              \"7\" ;\r\n      oslc_rm:rmServiceProviders\r\n              <https://elmwb.com:9443/rm/oslc_rm/catalog> ;\r\n      oslc_rm:version \"7.0.2\" ;\r\n      dc:description \"\"\"This application provides the capabilities to create\n\t\tand manage requirements and trace them to modeling, testing, and\n\t\tchange and configuration management. You can define, elicit, capture,\n\t\telaborate, discuss, and review requirements and supporting artifacts.\n\t\"\"\" ;\r\n      dc:title \"Doors Next\"@en ;\r\n      rm:cmpProjectAreas <https://elmwb.com:9443/rm/rm-projects> ;\r\n      rm:components <https://elmwb.com:9443/rm/cm/component/ldpc> ;\r\n      rm:glossaryTermsQuery\r\n              <https://elmwb.com:9443/rm/glossary/termslookup> ;\r\n      rm:projectAreas <https://elmwb.com:9443/rm/projects> ;\r\n      rm:rrcExtensions \"0.1.3-0.1.5\" ;\r\n      rm:trackedResourceSetProvider\r\n              [ a       trs2:TrackedResourceSet ;\r\n                oslc:domain <http://jazz.net/ns/process#> ;\r\n                trs2:trackedResourceSet\r\n                        <https://elmwb.com:9443/rm/process-trs2> ;\r\n                dc:description \"TRS 2.0 feed for process resources in DOORS Next\" ;\r\n                dc:title \"TRS 2.0 for DOORS Next Process Resources\" ;\r\n                dc:type <http://jazz.net/ns/process#>\r\n              ] .\r\n"
+				}
+			]
+		},
+		{
+			"name": "Request Access Token with Client",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonObject = pm.response.json()",
+							"console.log(\"OIDC Token Request\")",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"console.log(jsonObject)",
+							"",
+							"Object.entries(jsonObject).forEach(([key, value]) => {",
+							"    // grab access_token, type, and scope",
+							"    pm.environment.set(key,value)",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"content-type": true
+				}
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "grant_type",
+							"value": "client_credentials",
+							"type": "text"
+						},
+						{
+							"key": "client_id",
+							"value": "{{client_id}}",
+							"description": "from CLI setup",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "{{client_secret}}",
+							"type": "text"
+						},
+						{
+							"key": "scope",
+							"value": "openid profile email general",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{access_token_request_url}}",
+					"host": [
+						"{{access_token_request_url}}"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Bearer Token",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "grant_type",
+									"value": "client_credentials",
+									"type": "text"
+								},
+								{
+									"key": "client_id",
+									"value": "{{client_id}}",
+									"description": "from CLI setup",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "{{client_secret}}",
+									"type": "text"
+								},
+								{
+									"key": "scope",
+									"value": "openid profile email general",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{access_token_request_url}}",
+							"host": [
+								"{{access_token_request_url}}"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "X-Powered-By",
+							"value": "Servlet/3.0"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-store"
+						},
+						{
+							"key": "Pragma",
+							"value": "no-cache"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json;charset=UTF-8"
+						},
+						{
+							"key": "Content-Language",
+							"value": "en-US"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Tue, 15 Feb 2022 19:14:15 GMT"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"access_token\": \"Pb4fbD2Fk6ST2Sg7njZKaX0fNMosoRnZUxl50e8V\",\n    \"token_type\": \"Bearer\",\n    \"expires_in\": 7200,\n    \"scope\": \"general openid profile email\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Project Areas",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"console.log(\"Project Areas - Clearing Cookies\")",
+							"const jar = pm.cookies.jar();",
+							"",
+							"jar.clear(pm.request.url, function (error) {",
+							"",
+							"});",
+							"",
+							"console.log(\"Successful access of restricted resource\")"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"followRedirects": false
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "OSLC-Core-Version",
+						"value": "2.0",
+						"type": "default"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "https://{{dns}}/{{application}}/process/project-areas",
+					"protocol": "https",
+					"host": [
+						"{{dns}}"
+					],
+					"path": [
+						"{{application}}",
+						"process",
+						"project-areas"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "All Project Areas",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "OSLC-Core-Version",
+								"value": "2.0",
+								"type": "default"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "https://{{dns}}/{{application}}/process/project-areas",
+							"protocol": "https",
+							"host": [
+								"{{dns}}"
+							],
+							"path": [
+								"{{application}}",
+								"process",
+								"project-areas"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "xml",
+					"header": [
+						{
+							"key": "X-Powered-By",
+							"value": "Servlet/3.0"
+						},
+						{
+							"key": "Strict-Transport-Security",
+							"value": "max-age=31536000"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/xml;charset=UTF-8"
+						},
+						{
+							"key": "Content-Language",
+							"value": "en-US"
+						},
+						{
+							"key": "Content-Length",
+							"value": "4979"
+						},
+						{
+							"key": "Date",
+							"value": "Tue, 15 Feb 2022 19:14:48 GMT"
+						}
+					],
+					"cookie": [],
+					"body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<jp06:project-areas xmlns:jp06=\"http://jazz.net/xmlns/prod/jazz/process/0.6/\">\n    <jp06:project-area jp06:name=\"Initial Test Project (Requirements)\">\n        <jp06:summary>Initial Test Project (Requirements)</jp06:summary>\n        <jp06:description/>\n        <jp06:url>https://elmwb.com:9443/rm/process/project-areas/_lS0pwIReEeywkcHISoz5eg</jp06:url>\n        <jp06:roles-url>https://elmwb.com:9443/rm/process/project-areas/_lS0pwIReEeywkcHISoz5eg/roles</jp06:roles-url>\n        <jp06:links-url>https://elmwb.com:9443/rm/process/project-areas/_lS0pwIReEeywkcHISoz5eg/links</jp06:links-url>\n        <jp06:members-url>https://elmwb.com:9443/rm/process/project-areas/_lS0pwIReEeywkcHISoz5eg/members</jp06:members-url>\n        <jp:admins-url xmlns:jp=\"http://jazz.net/xmlns/prod/jazz/process/1.0/\">https://elmwb.com:9443/rm/process/project-areas/_lS0pwIReEeywkcHISoz5eg/admins</jp:admins-url>\n        <jp06:team-areas-url>https://elmwb.com:9443/rm/process/project-areas/_lS0pwIReEeywkcHISoz5eg/team-areas</jp06:team-areas-url>\n        <jp06:project-admins-url>https://elmwb.com:9443/rm/process/project-areas/_lS0pwIReEeywkcHISoz5eg/project-admins</jp06:project-admins-url>\n        <jp06:read-access-list-url>https://elmwb.com:9443/rm/process/project-areas/_lS0pwIReEeywkcHISoz5eg/read-access-list</jp06:read-access-list-url>\n        <jp:timelines-url xmlns:jp=\"http://jazz.net/xmlns/prod/jazz/process/1.0/\">https://elmwb.com:9443/rm/process/project-areas/_lS0pwIReEeywkcHISoz5eg/timelines</jp:timelines-url>\n        <jp06:access-public>false</jp06:access-public>\n        <jp06:access-visible-to-access-list>false</jp06:access-visible-to-access-list>\n        <jp06:access-visible-to-members>true</jp06:access-visible-to-members>\n        <jp06:modified>Wed, 02 Feb 2022 19:31:48 GMT</jp06:modified>\n        <jp06:archived>false</jp06:archived>\n        <jp:history-url xmlns:jp=\"http://jazz.net/xmlns/prod/jazz/process/1.0/\">https://elmwb.com:9443/rm/process/project-areas/_lS0pwIReEeywkcHISoz5eg/history</jp:history-url>\n        <jp:configuration-management-enabled xmlns:jp=\"http://jazz.net/xmlns/prod/jazz/process/1.0/\">true</jp:configuration-management-enabled>\n        <jp:configuration-management-mode xmlns:jp=\"http://jazz.net/xmlns/prod/jazz/process/1.0/\">SINGLE</jp:configuration-management-mode>\n    </jp06:project-area>\n    <jp06:project-area jp06:name=\"jazzadmin Project Data (Requirements Management)\">\n        <jp06:summary>jazzadmin Project Data (Requirements Management)</jp06:summary>\n        <jp06:description/>\n        <jp06:url>https://elmwb.com:9443/rm/process/project-areas/_QUnqIIRhEeywkcHISoz5eg</jp06:url>\n        <jp06:roles-url>https://elmwb.com:9443/rm/process/project-areas/_QUnqIIRhEeywkcHISoz5eg/roles</jp06:roles-url>\n        <jp06:links-url>https://elmwb.com:9443/rm/process/project-areas/_QUnqIIRhEeywkcHISoz5eg/links</jp06:links-url>\n        <jp06:members-url>https://elmwb.com:9443/rm/process/project-areas/_QUnqIIRhEeywkcHISoz5eg/members</jp06:members-url>\n        <jp:admins-url xmlns:jp=\"http://jazz.net/xmlns/prod/jazz/process/1.0/\">https://elmwb.com:9443/rm/process/project-areas/_QUnqIIRhEeywkcHISoz5eg/admins</jp:admins-url>\n        <jp06:team-areas-url>https://elmwb.com:9443/rm/process/project-areas/_QUnqIIRhEeywkcHISoz5eg/team-areas</jp06:team-areas-url>\n        <jp06:project-admins-url>https://elmwb.com:9443/rm/process/project-areas/_QUnqIIRhEeywkcHISoz5eg/project-admins</jp06:project-admins-url>\n        <jp06:read-access-list-url>https://elmwb.com:9443/rm/process/project-areas/_QUnqIIRhEeywkcHISoz5eg/read-access-list</jp06:read-access-list-url>\n        <jp:timelines-url xmlns:jp=\"http://jazz.net/xmlns/prod/jazz/process/1.0/\">https://elmwb.com:9443/rm/process/project-areas/_QUnqIIRhEeywkcHISoz5eg/timelines</jp:timelines-url>\n        <jp06:access-public>false</jp06:access-public>\n        <jp06:access-visible-to-access-list>false</jp06:access-visible-to-access-list>\n        <jp06:access-visible-to-members>true</jp06:access-visible-to-members>\n        <jp06:modified>Wed, 02 Feb 2022 19:50:43 GMT</jp06:modified>\n        <jp06:archived>false</jp06:archived>\n        <jp:history-url xmlns:jp=\"http://jazz.net/xmlns/prod/jazz/process/1.0/\">https://elmwb.com:9443/rm/process/project-areas/_QUnqIIRhEeywkcHISoz5eg/history</jp:history-url>\n        <jp:configuration-management-enabled xmlns:jp=\"http://jazz.net/xmlns/prod/jazz/process/1.0/\">true</jp:configuration-management-enabled>\n        <jp:configuration-management-mode xmlns:jp=\"http://jazz.net/xmlns/prod/jazz/process/1.0/\">SINGLE</jp:configuration-management-mode>\n    </jp06:project-area>\n</jp06:project-areas>"
+				}
+			]
+		}
+	]
+}
